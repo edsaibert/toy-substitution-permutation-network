@@ -2,7 +2,7 @@ CXX ?= g++
 CXXFLAGS ?= -std=c++17 -Wall -Wextra -pedantic
 
 TARGET := spn
-SOURCES := spn.cpp
+SOURCES := logger.cpp rounds.cpp spn.cpp
 
 .PHONY: all run clean
 
