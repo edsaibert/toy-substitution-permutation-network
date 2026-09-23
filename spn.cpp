@@ -10,12 +10,14 @@ sbc23: GRR2023
 #include <iomanip>
 #include <functional>
 #include <chrono>
+#include <cstdint>
+#include <array>
 
 using namespace std;
 using namespace chrono;
-Logger& logger;
+Logger* logger = nullptr;
 
-using block_t = array<array<u_int8_t, 4>, 4>; // Bloco de 16 bits representado como uma matriz 4x4 de bytes
+using block_t = array<array<uint8_t, 4>, 4>; // Bloco de 16 bits representado como uma matriz 4x4 de bytes
 
 class Round {
 public:
@@ -84,7 +86,7 @@ public:
     }
 };
 
-typedef struct LogRound {
+struct LogRound {
     string roundType;
     double duration;
 };
@@ -116,17 +118,18 @@ public:
 
 class LoggerRAII {
 public:
-    Logger& logger;
     string roundType;
     high_resolution_clock::time_point start;
 
     LoggerRAII(const string& roundType)
-        : logger(logger), roundType(roundType), start(high_resolution_clock::now()) {}
+        : roundType(roundType), start(high_resolution_clock::now()) {}
 
     ~LoggerRAII() {
         auto end = high_resolution_clock::now();
         duration<double> duration = end - start;
-        logger.addLog({roundType, duration.count()});
+
+		if (logger)
+			logger->addLog({roundType, duration.count()});
     }
 };
 
