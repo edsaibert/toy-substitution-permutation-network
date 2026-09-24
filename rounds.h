@@ -21,7 +21,8 @@ sbc23: GRR2023
 using namespace std;
 using namespace chrono;
 
-using block_t = array<array<uint8_t, 4>, 4>; // Bloco de 16 bits representado como uma matriz 4x4 de bytes
+using block_t = array<array<uint8_t, 4>, 4>; 	// Bloco de 16 bits representado como uma matriz 4x4 de bytes
+const size_t block_s = 16;						// Tamanho do bloco (em bytes)
 
 class KeyGenerator {
 public:
