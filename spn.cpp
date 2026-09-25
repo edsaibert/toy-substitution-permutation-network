@@ -20,17 +20,37 @@ sbc23: GRR2023
 using namespace std;
 using namespace chrono;
 
+
+block_t masterKey = {{
+    {0x2B, 0x7E, 0x15, 0x16},
+    {0x28, 0xAE, 0xD2, 0xA6},
+    {0xAB, 0xF7, 0x15, 0x88},
+    {0x09, 0xCF, 0x4F, 0x3C}
+}};
+
 int main(int argc, char* argv[]) {
-	if (argc < 2){
-		cerr << "Necessário caminho para o texto. Usage: " << argv[0] << " <input_file>\n";
+	// =================================
+	// Tratamento do argc --------------
+	// =================================
+	if (argc < 4){
+		cerr << "Usage: " << argv[0] << "-enc/-dec <input_file> <output_file>\n";
 		return 1;
 	}
 
-	string inputPath = argv[1];
-	string outputPath = inputPath + ".enc";	
+	bool enc;
+	if (strcmp(argv[1], "-enc") == 0) enc = true;
+	else if (strcmp(argv[1], "-dec") == 0) enc = false;
+	else {
+		cerr << "\nErro: flag incorreta\n";
+		exit(1);
+	}
 
-	cout << "output path: " << outputPath << "\n";
+	string inputPath = argv[2];
+	string outputPath = argv[3];	
 
+	// =================================
+	// Criação arquivos in/out ---------
+	// =================================
 	FILE* inFile = fopen(inputPath.c_str(), "rb");
 	if (!inFile) {
 		perror("Failed to open input file");
@@ -44,6 +64,9 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
+	// =================================
+	// Instanciamento classes ----------
+	// =================================
 	logger = new Logger();
     LoggerRAII log_main("Main Function");
 
@@ -55,14 +78,18 @@ int main(int argc, char* argv[]) {
 	SubstitutionRound subRound;
 	PermutationRound permRound;
 
+	// Critério arbitrário para criação da cifra
 	for (int i = 0; i < numRounds; ++i) {
 		if (i % 2 == 0) {
 			cipher.addRound(&subRound, generatedKeys[i]);
 		} else {
-			cipher.addRound(&permRound, generatedKeys[i]);
+			cipher.addRound(&permRound);
 		}
 	}
 
+	// =================================
+	// Leitura/escrita dos blocos ------
+	// =================================
 	block_t block{};
 	size_t bytesRead;
 	uint8_t* block_ptr = reinterpret_cast<uint8_t*> (block.data());
@@ -73,9 +100,8 @@ int main(int argc, char* argv[]) {
 			memset(block_ptr + bytesRead, 0, block_s - bytesRead);			
 		}
 
-		cout << "\n[" << bytesRead << "] bytes read";
-
-		cipher.encrypt(block);
+		if (enc) cipher.encrypt(block);
+		else cipher.decrypt(block);
 
 		size_t bytesWritten = fwrite(block_ptr, 1, block_s, outFile);
 		if (bytesWritten < block_s){
@@ -85,10 +111,13 @@ int main(int argc, char* argv[]) {
 		
 	}
 
+	// =================================
+	// Operações finais ----------------
+	// =================================
 	fclose(inFile);
 	fclose(outFile);
 
-	logger->printLogs();
+	//logger->printLogs();
 	delete logger;
 
 	logger = nullptr;

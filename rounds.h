@@ -54,7 +54,7 @@ public:
     vector<Round*> rounds;
     vector<block_t> roundKeys;
 
-    void addRound(Round* round, const block_t& key);
+    void addRound(Round* round, const block_t& key = {});
     void encrypt(block_t& block);
     void decrypt(block_t& block);
 };
