@@ -14,7 +14,6 @@ sbc23: GRR2023
 #include <array>
 #include <cstring>
 
-#include "logger.h"
 #include "rounds.h"
 
 using namespace std;
@@ -67,9 +66,7 @@ int main(int argc, char* argv[]) {
 	// =================================
 	// Instanciamento classes ----------
 	// =================================
-	logger = new Logger();
-    LoggerRAII log_main("Main Function");
-
+	
 	int numRounds = 4;
 	KeyGenerator keyGen;
 	vector<block_t> generatedKeys = keyGen.generateKeys(masterKey, numRounds);
@@ -133,9 +130,5 @@ int main(int argc, char* argv[]) {
 	fclose(inFile);
 	fclose(outFile);
 
-	//logger->printLogs();
-	delete logger;
-
-	logger = nullptr;
-    return 0;
+	return 0;
 }

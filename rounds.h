@@ -16,8 +16,6 @@ sbc23: GRR2023
 #include <cstdint>
 #include <array>
 
-#include "logger.h"
-
 using namespace std;
 using namespace chrono;
 

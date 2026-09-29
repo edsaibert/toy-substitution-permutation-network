@@ -78,7 +78,6 @@ void PermutationRound::encrypt(block_t& block, const block_t& key) {
 void PermutationRound::decrypt(block_t& block, const block_t& key) {
 	// Implementação da cifra de permutação
 
-	// Exemplo bobo
 	for (int r = 1; r < 4; ++r) {
 		array<uint8_t, 4> temp = block[r];
 		for (int c = 0; c < 4; ++c) {
@@ -93,7 +92,6 @@ void Cipher::addRound(Round* round, const block_t& key){
 }
 
 void Cipher::encrypt(block_t& block) {
-	LoggerRAII log("Cipher Encrypt");
 
 	for (size_t i = 0; i < rounds.size(); ++i) {
 		rounds[i]->encrypt(block, roundKeys[i]);	
@@ -101,7 +99,6 @@ void Cipher::encrypt(block_t& block) {
 }
 
 void Cipher::decrypt(block_t& block) {
-	LoggerRAII log("Cipher Decrypt");
 	for (size_t i = rounds.size(); i-- > 0;) {
 		rounds[i]->decrypt(block, roundKeys[i]);
 	}
