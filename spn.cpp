@@ -102,13 +102,29 @@ int main(int argc, char* argv[]) {
 
 		if (enc) cipher.encrypt(block);
 		else cipher.decrypt(block);
+        
+        if(!enc && (block[3][3] == 0)) {
+            // retira padding
+            int pad = 1;
+            int ch = 14;
+            while(block[ch/4][ch%4] == 0 && ch > 0){
+                pad++;
+                ch--;
+            }
 
-		size_t bytesWritten = fwrite(block_ptr, 1, block_s, outFile);
-		if (bytesWritten < block_s){
-			cerr << "Erro enquanto escrevia no arquivo de saída.";
-			break;
+            size_t bytesWritten = fwrite(block_ptr, 1, block_s - pad, outFile);       
+            if (bytesWritten < block_s - pad){                                        
+                cerr << "Erro enquanto escrevia no arquivo de saída.";          
+                break;                                                          
+            }             
+
+        } else {
+		    size_t bytesWritten = fwrite(block_ptr, 1, block_s, outFile);
+		    if (bytesWritten < block_s){
+			    cerr << "Erro enquanto escrevia no arquivo de saída.";
+			    break;
+		    }
 		}
-		
 	}
 
 	// =================================
