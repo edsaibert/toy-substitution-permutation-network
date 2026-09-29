@@ -47,8 +47,6 @@ void printMatrix(block_t& block){
 }
 
 void SubstitutionRound::encrypt(block_t& block, const block_t& key) {
-	// Cifra de vigenere
-
     for (int r = 0; r < 4; ++r) {                                               
          for (int c = 0; c < 4; ++c) {                                           
              block[r][c] += key[r][c];                                           
